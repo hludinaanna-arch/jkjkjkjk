@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackMyUni - Главная</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary-color: #5a5ce6; 
+            --primary-hover: #4a4cd6; 
+            --text-dark: #111; 
+            --text-gray: #6b7280; 
+            --bg-light: #f9fafb; 
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        
+        /* Header */
+        header { background-color: #fff; padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.8rem; font-size: 1.5rem; font-weight: 700; color: var(--text-dark); }
+        .logo svg { height: 40px; width: auto; }
+        .logo .highlight-my { color: var(--primary-color); }
+        nav { display: flex; gap: 2rem; align-items: center; }
+        nav a { font-weight: 500; color: var(--text-dark); transition: color 0.3s ease; }
+        nav a:hover { color: var(--primary-color); }
+        #lang-toggle { background: none; border: none; cursor: pointer; font-size: 1.4rem; color: var(--text-dark); display: flex; align-items: center; transition: transform 0.3s; padding: 0.5rem; border-radius: 50%; }
+        #lang-toggle:hover { background-color: #f3f4f6; transform: rotate(15deg); }
+        .auth-buttons { display: flex; gap: 1rem; }
+        .btn { padding: 0.6rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; display: inline-block; }
+        .btn-login { background-color: transparent; border-color: var(--primary-color); color: var(--primary-color); }
+        .btn-login:hover { background-color: var(--primary-color); color: #fff; }
+        .btn-signup { background-color: var(--primary-color); color: #fff; }
+        .btn-signup:hover { background-color: var(--primary-hover); }
+
+        /* Hero Section */
+        .hero { 
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); 
+            padding: 6rem 0; 
+            text-align: center; 
+            border-bottom-left-radius: 3rem; 
+            border-bottom-right-radius: 3rem; 
+            margin-bottom: 4rem; 
+        }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -0.02em; }
+        .hero p { font-size: 1.2rem; color: var(--text-gray); max-width: 600px; margin: 0 auto 2rem; }
+        .hero-btn { padding: 1rem 2.5rem; font-size: 1.1rem; border-radius: 50px; background: var(--primary-color); color: #fff; border: none; cursor: pointer; transition: background 0.3s; }
+        .hero-btn:hover { background: var(--primary-hover); }
+
+        /* Features Grid */
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+        .feature-card { background: #fff; padding: 2rem; border-radius: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: center; }
+        .feature-icon { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .feature-card h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+        .feature-card p { color: var(--text-gray); font-size: 0.95rem; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .close-modal {
+            position: absolute;
+            top: 1rem; right: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-modal:hover { color: var(--text-dark); }
+        
+        .modal-header { text-align: center; margin-bottom: 2rem; }
+        .modal-header h2 { font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
+        .modal-header p { color: var(--text-gray); font-size: 0.95rem; margin-top: 0.5rem; }
+
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark); }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.8rem;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus { border-color: var(--primary-color); }
+        .form-group .input-hint { font-size: 0.8rem; color: var(--text-gray); margin-top: 0.3rem; display: block; }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 0.8rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+        .submit-btn:hover { background: var(--primary-hover); }
+
+        @media (max-width: 768px) { 
+            .header-content { flex-direction: column; gap: 1.5rem; } 
+            nav { flex-wrap: wrap; justify-content: center; } 
+            .hero h1 { font-size: 2.5rem; } 
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 20L15 40L50 60L85 40L50 20Z" stroke="#1F2937" stroke-width="5" stroke-linejoin="round"/><path d="M25 50V75C25 75 35 85 50 85C65 85 75 75 75 75V50" stroke="#1F2937" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="85" cy="65" r="8" fill="#5A5CE6"/><path d="M75 55L85 65" stroke="#5A5CE6" stroke-width="3" stroke-linecap="round"/></svg>
+                <span>Track<span class="highlight-my">My</span>Uni</span>
+            </div>
+            <nav>
+                <a href="index.html" data-key="nav_home">Home</a>
+                <a href="universities.html" data-key="nav_uni">Universities</a>
+                <a href="olympiads.html" data-key="nav_olymp">Olympiads</a>
+                <button id="lang-toggle" title="Switch Language"><i class="fa-solid fa-globe"></i></button>
+            </nav>
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-login" data-key="btn_login">Log In</a>
+                <button class="btn btn-signup" id="open-register-btn" data-key="btn_signup">Sign Up</button>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1 data-key="hero_title">Your Path to Top Universities</h1>
+                <p data-key="hero_subtitle">Track admission rules, calculate your chances, and find the perfect program for your future career.</p>
+                <button class="hero-btn" id="hero-register-btn" data-key="hero_btn">Get Started Free</button>
+            </div>
+        </section>
+
+        <section class="container features">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h3 data-key="feat_1_title">University Tracker</h3>
+                <p data-key="feat_1_desc">Detailed info on MSU, BMSTU, MIPT, HSE, and more. Budget spots, tuition fees, and passing scores.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-trophy"></i></div>
+                <h3 data-key="feat_2_title">Olympiad Guide</h3>
+                <p data-key="feat_2_desc">VsOSh, Vysshaya Proba, Lomonosov. Schedules, subjects, and BVI privileges for top unis.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-calculator"></i></div>
+                <h3 data-key="feat_3_title">Chance Calculator</h3>
+                <p data-key="feat_3_desc">Estimate your admission probability based on EGE scores, DVI results, and individual achievements.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Registration Modal -->
+    <div class="modal-overlay" id="register-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal-btn">&times;</span>
+            <div class="modal-header">
+                <h2 data-key="reg_title">Create Account</h2>
+                <p data-key="reg_subtitle">Join TrackMyUni to track your admission progress</p>
+            </div>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="reg-name" data-key="reg_name_label">Account Name</label>
+                    <input type="text" id="reg-name" placeholder="e.g., Ivan Ivanov" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-username" data-key="reg_username_label">Username</label>
+                    <input type="text" id="reg-username" placeholder="@ivan_iv" pattern="^@[a-zA-Z0-9_]+$" title="Must start with @ and contain only letters, numbers, or underscores" required>
+                    <span class="input-hint" data-key="reg_username_hint">Optional: English username starting with @ (e.g., @alex_smith)</span>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email" data-key="reg_email_label">Email Address</label>
+                    <input type="email" id="reg-email" placeholder="example@mail.ru" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-phone" data-key="reg_phone_label">Phone Number</label>
+                    <input type="tel" id="reg-phone" placeholder="+7 (999) 000-00-00" required>
+                </div>
+                <button type="submit" class="submit-btn" data-key="reg_submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- TRANSLATIONS ---
+        const translations = {
+            en: {
+                nav_home: "Home", nav_uni: "Universities", nav_olymp: "Olympiads",
+                btn_login: "Log In", btn_signup: "Sign Up",
+                hero_title: "Your Path to Top Universities",
+                hero_subtitle: "Track admission rules, calculate your chances, and find the perfect program for your future career.",
+                hero_btn: "Get Started Free",
+                feat_1_title: "University Tracker", feat_1_desc: "Detailed info on MSU, BMSTU, MIPT, HSE, and more. Budget spots, tuition fees, and passing scores.",
+                feat_2_title: "Olympiad Guide", feat_2_desc: "VsOSh, Vysshaya Proba, Lomonosov. Schedules, subjects, and BVI privileges for top unis.",
+                feat_3_title: "Chance Calculator", feat_3_desc: "Estimate your admission probability based on EGE scores, DVI results, and individual achievements.",
+                reg_title: "Create Account", reg_subtitle: "Join TrackMyUni to track your admission progress",
+                reg_name_label: "Account Name", reg_username_label: "Username", reg_email_label: "Email Address", reg_phone_label: "Phone Number",
+                reg_username_hint: "Optional: English username starting with @ (e.g., @alex_smith)",
+                reg_submit: "Sign Up"
+            },
+            ru: {
+                nav_home: "Главная", nav_uni: "Вузы", nav_olymp: "Олимпиады",
+                btn_login: "Войти", btn_signup: "Регистрация",
+                hero_title: "Твой путь в ведущие вузы",
+                hero_subtitle: "Следи за правилами приема, рассчитывай шансы и находи идеальную программу для будущей карьеры.",
+                hero_btn: "Начать бесплатно",
+                feat_1_title: "Трекер вузов", feat_1_desc: "Подробная информация по МГУ, МГТУ, МФТИ, ВШЭ и другим. Бюджетные места, стоимость и проходные баллы.",
+                feat_2_title: "Гид по олимпиадам", feat_2_desc: "ВсОШ, Высшая проба, Ломоносов. Расписание, предметы и льготы БВИ для топовых университетов.",
+                feat_3_title: "Калькулятор шансов", feat_3_desc: "Оцени вероятность поступления на основе баллов ЕГЭ, ДВИ и индивидуальных достижений.",
+                reg_title: "Создать аккаунт", reg_subtitle: "Присоединяйся к TrackMyUni для отслеживания поступления",
+                reg_name_label: "Имя аккаунта", reg_username_label: "Юзернейм", reg_email_label: "Электронная почта", reg_phone_label: "Номер телефона",
+                reg_username_hint: "По желанию: английский юзернейм с @ (например, @alex_smith)",
+                reg_submit: "Зарегистрироваться"
+            }
+        };
+
+        // --- LANGUAGE SWITCHER ---
+        const langToggle = document.getElementById('lang-toggle');
+        let currentLang = localStorage.getItem('site_lang') || 'en';
+
+        function applyLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[lang][key]) el.textContent = translations[lang][key];
+            });
+            document.querySelectorAll('[data-placeholder-key]').forEach(el => {
+                const key = el.getAttribute('data-placeholder-key');
+                if (translations[lang][key]) el.placeholder = translations[lang][key];
+            });
+            localStorage.setItem('site_lang', lang);
+        }
+
+        langToggle.addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'ru' : 'en';
+            applyLanguage(currentLang);
+            langToggle.style.transform = 'rotate(360deg)';
+            setTimeout(() => langToggle.style.transform = 'rotate(0deg)', 300);
+        });
+
+        // --- MODAL LOGIC ---
+        const modal = document.getElementById('register-modal');
+        const openBtns = [document.getElementById('open-register-btn'), document.getElementById('hero-register-btn')];
+        const closeBtn = document.getElementById('close-modal-btn');
+        const form = document.getElementById('register-form');
+
+        // Open modal
+        openBtns.forEach(btn => {
+            if(btn) btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+            });
+        });
+
+        // Close modal functions
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+
+        // Close when clicking outside content
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+        });
+
+        // Form submission handler
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('reg-name').value;
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const phone = document.getElementById('reg-phone').value;
+
+            // Simple validation feedback
+            if(name && email && phone) {
+                alert(currentLang === 'en' 
+                    ? `Registration successful! Welcome, ${name}. Username: ${username}` 
+                    : `Регистрация успешна! Добро пожаловать, ${name}. Юзернейм: ${username}`);
+                closeModal();
+                form.reset();
+                // Here you would typically send data to your backend
+            }
+        });
+
+        // Initial render
+        applyLanguage(currentLang);
+    </script>
+</body>
+</html>
